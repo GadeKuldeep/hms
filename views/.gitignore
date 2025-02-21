@@ -1,0 +1,3 @@
+# the files that I don't want to push on git 
+node_modules/
+.env
