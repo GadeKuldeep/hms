@@ -124,13 +124,13 @@
         <h2>Login</h2>
         <p>Enter your credentials to access the system</p>
 
-        <form id="login-form" method="post">
+        <form id="login-form" action="/login" method="post">
             <div class="input-group">
-                <input type="email" placeholder="Email" required>
+                <input type="email"  name="email"  id="email" placeholder="Email"  required>
             </div>
             
             <div class="input-group">
-                <input type="password" id="password" placeholder="Password" required>
+                <input type="password" id="password"  name="password" placeholder="Password" required>
                 <span class="password-toggle" onclick="togglePassword()">👁</span>
             </div>
 
@@ -146,14 +146,58 @@
     </div>
 
     <script>
+        // Password Toggle Functionality
         function togglePassword() {
-            const passwordField = document.getElementById("password");
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '👁';
             } else {
-                passwordField.type = "password";
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁';
             }
         }
+    
+        // Form Submission Handler
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const button = form.querySelector('button[type="submit"]');
+            const email = form.email.value.trim();
+            const password = form.password.value.trim();
+    
+            // Disable button during submission
+            button.disabled = true;
+            button.textContent = 'Logging in...';
+    
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+    
+                const data = await response.json();
+    
+                if (response.ok) {
+                    // Store token securely (consider sessionStorage for better security)
+                    localStorage.setItem("token", data.token);
+                    // Redirect to dashboard
+                    window.location.href = "/dashboard";
+                } else {
+                    alert(data.error || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                console.error("Login Failed:", error);
+                alert('Network error. Please check your connection.');
+            } finally {
+                // Re-enable button
+                button.disabled = false;
+                button.textContent = 'Login';
+            }
+        });
     </script>
 
 </body>

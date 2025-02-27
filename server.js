@@ -5,12 +5,13 @@ Frontend: HTML, CSS (Tailwind), JavaScript
 */
 
 // 1. Initialize Express Server
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,7 +24,7 @@ app.use(cors());
 
 // 2. Connect to MongoDB
 const mongodb_uri=process.env.MONGO_URI;
-//const mongodb_uri=process.env.MONGO_URI_LOCAL;
+// const mongodb_uri=process.env.MONGO_URI_LOCAL;
 
 mongoose.connect(mongodb_uri, {
   useNewUrlParser: true,
@@ -39,7 +40,7 @@ const HospitalSchema = new mongoose.Schema({
   doctors: Number
 });
 const UserSchema = new mongoose.Schema({
-  username: String,
+  email: String,
   password: String,
   hospitalName: String
 });
@@ -55,11 +56,15 @@ app.get('/signup',(req,res)=>{
     res.render('signup');
 })
 app.post("/signup", async (req, res) => {
-  const { username, password, hospitalName } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({ username, password: hashedPassword, hospitalName });
+  const { email, password, hospitalName } = req.body;
+  const user = await User.findOne({ email });
+  if (!user){ const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = new User({ email, password: hashedPassword, hospitalName });
   await newUser.save();
   res.json({ message: "User registered successfully" });
+}else{
+  res.json({message:"User already exist..."})
+}
 });
 
 app.get('/login',(req,res)=>{
@@ -67,21 +72,36 @@ app.get('/login',(req,res)=>{
 })
 
 app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
-  if (!user) return res.status(400).json({ error: "User not found" });
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json({ error: "Invalid password" });
-  const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET);
-  res.json({ token });
+  const { email, password } = req.body;
+
+  try {
+      const user = await User.findOne({ email });
+      console.log(user);
+      if (!user) return res.status(400).json({ error: "User not found" });
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+      res.json({ token, redirect: "/dashboard" });
+  } catch (err) {
+      res.status(500).json({ error: "Server error" });
+  }
 });
+
+app.get('/dashboard',(req,res)=>{
+  res.render('dashboard');
+})
+
+
 
 app.get("/hospitals", async (req, res) => {
   const hospitals = await Hospital.find();
   res.json(hospitals);
 });
 
-app.post("/hospitals", async (req, res) => {
+app.post("/dashboard", async (req, res) => {
   const newHospital = new Hospital(req.body);
   await newHospital.save();
   res.json({ message: "Hospital added successfully" });

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Hospital Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f3eaff;
+            color: #4B0082;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            animation: slideUp 1s ease-in-out;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #6A5ACD;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #6A5ACD;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: #4B0082;
+        }
+
+        .home-btn {
+            background: white;
+            color: #6A5ACD;
+            border: 2px solid #6A5ACD;
+            margin-top: 10px;
+        }
+
+        .home-btn:hover {
+            background: #6A5ACD;
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Add Hospital Data</h2>
+        
+        <form id="hospitalForm">
+            <div class="form-group">
+                <label for="hospitalName">Hospital Name:</label>
+                <input type="text" id="hospitalName" name="hospitalName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="bedsAvailable">Beds Available:</label>
+                <input type="number" id="bedsAvailable" name="bedsAvailable" required>
+            </div>
+
+            <div class="form-group">
+                <label for="patients">Number of Patients:</label>
+                <input type="number" id="patients" name="patients" required>
+            </div>
+
+            <div class="form-group">
+                <label for="doctors">Number of Doctors:</label>
+                <input type="number" id="doctors" name="doctors" required>
+            </div>
+
+            <button type="submit">Submit</button>
+            <button type="button" class="home-btn" onclick="goHome()">🏠 Home</button>
+        </form>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = "/"; // Change this to your home page URL
+        }
+
+        document.getElementById("hospitalForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const hospitalData = {
+                hospitalName: document.getElementById("hospitalName").value,
+                bedsAvailable: document.getElementById("bedsAvailable").value,
+                patients: document.getElementById("patients").value,
+                doctors: document.getElementById("doctors").value
+            };
+
+            try {
+                const response = await fetch("http://localhost:5000/add-hospital", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(hospitalData)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert("Hospital data added successfully!");
+                    document.getElementById("hospitalForm").reset();
+                } else {
+                    alert("Error: " + result.error);
+                }
+            } catch (error) {
+                console.error("Error submitting data:", error);
+                alert("Failed to submit hospital data.");
+            }
+        });
+    </script>
+
+</body>
+</html>
