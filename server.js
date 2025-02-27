@@ -12,10 +12,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
@@ -23,8 +25,8 @@ app.use(express.json());
 app.use(cors());
 
 // 2. Connect to MongoDB
-const mongodb_uri=process.env.MONGO_URI;
-// const mongodb_uri=process.env.MONGO_URI_LOCAL;
+// const mongodb_uri=process.env.MONGO_URI;
+const mongodb_uri=process.env.MONGO_URI_LOCAL;
 
 mongoose.connect(mongodb_uri, {
   useNewUrlParser: true,
