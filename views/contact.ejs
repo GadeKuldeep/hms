@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #f3eaff, #d5bfff);
+            color: #6A5ACD;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .contact-container {
+            background-color: #f8f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #6A5ACD;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #6A5ACD;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #5a4bb7;
+        }
+        .home-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+        .home-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #6A5ACD;
+        }
+        @media (max-width: 600px) {
+            .contact-container {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            input, textarea, button {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+            .home-icon {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="home-icon" onclick="window.location.href='/'" title="Go to Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+    </div>
+
+    <div class="contact-container">
+        <h2>Contact Us</h2>
+        <form id="contact-form">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <input type="text" id="subject" name="subject" placeholder="Subject" required>
+            <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            const formData = {
+                name: name,
+                email: email,
+                subject: subject,
+                message: message
+            };
+
+            fetch('https://formspree.io/f/{your_form_id}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Message sent successfully!');
+                    window.location.href = '/';
+                } else {
+                    alert('Failed to send message. Please try again later.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            });
+        });
+    </script>
+
+</body>
+</html>

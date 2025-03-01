@@ -34,16 +34,6 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 26px;
-            font-weight: bold;
-            color: #fff;
-            transition: 0.3s;
-        }
         .logo {
             display: flex;
             align-items: center;
@@ -106,19 +96,54 @@
             flex-direction: column;
             text-align: center;
             padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            filter: blur(8px);
+            background-color: rgba(106, 90, 205, 0.3);
+            background-blend-mode: multiply;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 20px;
         }
 
         .hero h1 {
             font-size: 50px;
             font-weight: bold;
-            color: #6A5ACD;
+            color: #2e2662;
             animation: fadeIn 1.5s ease-in-out;
         }
 
         .hero p {
             font-size: 20px;
             margin-top: 10px;
-            color: #555;
+            color: #000000;
             animation: slideUp 1s ease-in-out;
         }
 
@@ -141,7 +166,6 @@
             transform: scale(1.05);
             border-color: yellow;
         }
-
 
         .table-container {
             width: 90%;
@@ -180,11 +204,46 @@
         footer {
             background: #6A5ACD;
             color: white;
+            padding: 30px 10px;
             text-align: center;
-            padding: 20px;
-            margin-top: 30px;
+            margin-top: 50px;
         }
-        
+
+        .footer-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .footer-info {
+            margin: 10px;
+        }
+
+        .footer-info h3 {
+            margin-bottom: 10px;
+            color: #f8f6ff;
+        }
+
+        .footer-info p {
+            font-size: 14px;
+        }
+
+        .footer-info a {
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-info a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            margin-top: 20px;
+            font-size: 14px;
+        }
 
         @keyframes fadeIn {
             from {
@@ -193,7 +252,7 @@
             }
 
             to {
-                opacity: 1;
+                opacity: 0.5;
                 transform: translateY(0);
             }
         }
@@ -209,6 +268,7 @@
                 transform: translateY(0);
             }
         }
+
         @media (max-width: 480px) {
             .logo {
                 font-size: 20px;
@@ -222,11 +282,17 @@
         }
 
         @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
             nav {
                 flex-direction: column;
                 padding: 15px;
                 text-align: center;
             }
+
             .logo {
                 font-size: 22px;
                 justify-content: center;
@@ -250,21 +316,36 @@
                 width: 80%;
             }
 
+            .hero {
+                height: 60vh;
+                padding: 60px 20px;
+            }
+
+            .slide {
+                filter: blur(4px);
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 
 <body>
-
     <nav>
         <div class="logo">
             <img src="/favicon.ico" alt="HMS Logo">
             <span>HMS</span>
         </div>
         <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
         </ul>
         <a href="/login">
             <button class="login-btn">Login / Sign Up</button>
@@ -272,10 +353,16 @@
     </nav>
 
     <div class="hero">
-        <h1>Hospital Management System</h1>
-        <p>Your health, our priority.</p>
+        <div class="background-slideshow">
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1920&q=80')"></div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&q=80')"></div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1589810264340-0ce27bfbf751?auto=format&fit=crop&w=1920&q=80')"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Hospital Management System</h1>
+            <p>Your health, our priority.</p>
+        </div>
     </div>
-
 
     <div class="search-container">
         <input type="text" id="search" placeholder="Enter the hospital name...">
@@ -297,33 +384,66 @@
         </table>
     </div>
 
-
     <footer>
-        <p>Managing hospitals efficiently with technology.</p>
+        <div class="footer-container">
+            <div class="footer-info">
+                <h3>Contact Us</h3>
+                <p>📍 123 Health St, City, Country</p>
+                <p>📞 +1 234 567 890</p>
+                <p>✉ contact@hospital.com</p>
+            </div>
+
+            <div class="footer-info">
+                <h3>Quick Links</h3>
+                <p><a href="/">🏠 Home</a></p>
+                <p><a href="/contact">📞 Contact</a></p>
+                <p><a href="/about">❓ About</a></p>
+            </div>
+
+            <div class="footer-info">
+                <h3>Operating Hours</h3>
+                <p>🕒 Mon-Fri: 8:00 AM - 8:00 PM</p>
+                <p>🕒 Sat-Sun: 10:00 AM - 5:00 PM</p>
+                <p>🚑 24/7 Emergency Services</p>
+            </div>
+        </div>
+
+        <p class="footer-bottom">© 2025 Hospital Name | All Rights Reserved</p>
     </footer>
 
     <script>
+        // Background slideshow functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showNextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        // Initialize slideshow
+        slides[0].classList.add('active');
+        setInterval(showNextSlide, 5000);
+
+        // Preload images for smoother transitions
+        window.addEventListener('load', () => {
+            const images = [
+                'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1920&q=80',
+                'https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&q=80',
+                'https://images.unsplash.com/photo-1589810264340-0ce27bfbf751?auto=format&fit=crop&w=1920&q=80'
+            ];
+            
+            images.forEach(url => {
+                new Image().src = url;
+            });
+        });
+
+        // Original table functionality
         const hospitals = [
             { name: "City Hospital", patients: 150, beds: 50, doctors: 20 },
             { name: "Apollo Clinic", patients: 200, beds: 80, doctors: 35 },
-            { name: "Sunshine Care", patients: 120, beds: 30, doctors: 15 },
-            { name: "Global Medical", patients: 180, beds: 60, doctors: 28 },
-            { name: "Green Valley Hospital", patients: 170, beds: 55, doctors: 22 },
-            { name: "Metro Health", patients: 210, beds: 75, doctors: 32 },
-            { name: "Summit Healthcare", patients: 190, beds: 65, doctors: 27 },
-            { name: "Lakeside Hospital", patients: 160, beds: 50, doctors: 20 },
-            { name: "Everest Medical", patients: 220, beds: 85, doctors: 38 },
-            { name: "Hope Clinic", patients: 140, beds: 45, doctors: 18 },
-            { name: "Golden Care Hospital", patients: 130, beds: 40, doctors: 16 },
-            { name: "Pinecrest Medical", patients: 155, beds: 48, doctors: 19 },
-            { name: "Starlight Hospital", patients: 180, beds: 60, doctors: 26 },
-            { name: "Silverline Healthcare", patients: 200, beds: 70, doctors: 30 },
-            { name: "New Horizon Clinic", patients: 175, beds: 55, doctors: 22 },
-            { name: "Grandview Hospital", patients: 195, beds: 72, doctors: 29 },
-            { name: "Tranquil Care", patients: 145, beds: 50, doctors: 21 },
-            { name: "Skyline Health", patients: 225, beds: 90, doctors: 40 },
-            { name: "Oceanview Medical", patients: 165, beds: 58, doctors: 23 },
-            { name: "Central General Hospital", patients: 210, beds: 80, doctors: 34 }
+            // ... (keep your existing hospital data array)
         ];
 
         const tableBody = document.getElementById("hospital-table");
@@ -346,7 +466,12 @@
             tableBody.innerHTML = "";
             hospitals.forEach(hospital => {
                 if (hospital.name.toLowerCase().includes(query)) {
-                    const row = `<tr><td>${hospital.name}</td><td>${hospital.patients}</td><td>${hospital.beds}</td><td>${hospital.doctors}</td></tr>`;
+                    const row = `<tr>
+                        <td>${hospital.name}</td>
+                        <td>${hospital.patients}</td>
+                        <td>${hospital.beds}</td>
+                        <td>${hospital.doctors}</td>
+                    </tr>`;
                     tableBody.innerHTML += row;
                 }
             });
@@ -354,7 +479,5 @@
 
         loadTableData();
     </script>
-
 </body>
-
 </html>

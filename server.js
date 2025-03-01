@@ -25,8 +25,8 @@ app.use(express.json());
 app.use(cors());
 
 // 2. Connect to MongoDB
-const mongodb_uri=process.env.MONGO_URI;
-// const mongodb_uri=process.env.MONGO_URI_LOCAL;
+// const mongodb_uri=process.env.MONGO_URI;
+const mongodb_uri=process.env.MONGO_URI_LOCAL;
 
 mongoose.connect(mongodb_uri, {
   useNewUrlParser: true,
@@ -51,12 +51,18 @@ const Hospital = mongoose.model("Hospital", HospitalSchema);
 const User = mongoose.model("User", UserSchema);
 
 // 4. User Authentication Routes
+app.get('/contact',(req,res)=>{
+  res.render('contact');
+});
+app.get('/about',(req,res)=>{
+  res.render('about');
+});
 app.get('/',(req,res)=>{
     res.render('index');
-})
+});
 app.get('/signup',(req,res)=>{
     res.render('signup');
-})
+});
 app.post("/signup", async (req, res) => {
   const { email, password, hospitalName } = req.body;
   const user = await User.findOne({ email });
@@ -78,7 +84,6 @@ app.post("/login", async (req, res) => {
 
   try {
       const user = await User.findOne({ email });
-      console.log(user);
       if (!user) return res.status(400).json({ error: "User not found" });
 
       const isMatch = await bcrypt.compare(password, user.password);
