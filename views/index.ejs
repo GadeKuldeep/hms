@@ -30,7 +30,6 @@
             width: 100%;
             top: 0;
             z-index: 100;
-            transition: 0.3s;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
 
@@ -41,7 +40,6 @@
             font-size: 26px;
             font-weight: bold;
             color: #fff;
-            transition: 0.3s;
         }
 
         .logo img {
@@ -86,6 +84,45 @@
         .login-btn:hover {
             background: #ffd700;
             transform: scale(1.1);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        .login-icon {
+            display: none;
+            background: yellow;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .login-icon img {
+            width: 20px;
+            height: 20px;
         }
 
         .hero {
@@ -250,9 +287,8 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
-
             to {
-                opacity: 0.5;
+                opacity: 1;
                 transform: translateY(0);
             }
         }
@@ -262,54 +298,62 @@
                 opacity: 0;
                 transform: translateY(50px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @media (max-width: 480px) {
-            .logo {
-                font-size: 20px;
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .logo img {
-                height: 30px;
-            }
-        }
-
         @media (max-width: 768px) {
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-            }
-
             nav {
-                flex-direction: column;
-                padding: 15px;
-                text-align: center;
+                flex-direction: row;
+                justify-content: center;
+                padding: 15px 50px;
+                height: 70px;
             }
 
             .logo {
+                position: relative;
+                z-index: 101;
                 font-size: 22px;
-                justify-content: center;
-                gap: 10px;
             }
 
-            .logo img {
-                height: 35px;
+            .menu-toggle {
+                display: block;
+            }
+
+            .login-btn {
+                display: none;
+            }
+
+            .login-icon {
+                display: block;
             }
 
             .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: #6A5ACD;
                 flex-direction: column;
-                margin-top: 10px;
+                padding: 20px;
+                transition: 0.3s;
+                z-index: 100;
+            }
+
+            .nav-links.active {
+                left: 0;
             }
 
             .nav-links li {
-                margin-bottom: 10px;
+                margin: 10px 0;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
             }
 
             .search-container input {
@@ -333,15 +377,36 @@
                 font-size: 18px;
             }
         }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 20px;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .logo img {
+                height: 30px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <nav>
+        <button class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <div class="logo">
             <img src="/favicon.ico" alt="HMS Logo">
             <span>HMS</span>
         </div>
+        <button class="login-icon" onclick="window.location.href='/login'">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjMDAwMDAwIj48cGF0aCBkPSJNMTIgMmMtNS41MiAwLTEwIDQuNDgtMTAgMTBzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwLTQuNDgtMTAtMTAtMTB6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=" alt="Login">
+        </button>
+        
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
@@ -378,9 +443,7 @@
                     <th>Doctors Available</th>
                 </tr>
             </thead>
-            <tbody id="hospital-table">
-
-            </tbody>
+            <tbody id="hospital-table"></tbody>
         </table>
     </div>
 
@@ -392,14 +455,12 @@
                 <p>📞 +1 234 567 890</p>
                 <p>✉ contact@hospital.com</p>
             </div>
-
             <div class="footer-info">
                 <h3>Quick Links</h3>
                 <p><a href="/">🏠 Home</a></p>
                 <p><a href="/contact">📞 Contact</a></p>
                 <p><a href="/about">❓ About</a></p>
             </div>
-
             <div class="footer-info">
                 <h3>Operating Hours</h3>
                 <p>🕒 Mon-Fri: 8:00 AM - 8:00 PM</p>
@@ -407,12 +468,28 @@
                 <p>🚑 24/7 Emergency Services</p>
             </div>
         </div>
-
         <p class="footer-bottom">© 2025 Hospital Name | All Rights Reserved</p>
     </footer>
 
     <script>
-        // Background slideshow functionality
+        // Mobile Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('nav') && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                menuToggle.classList.remove('active');
+            }
+        });
+
+        // Background Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         
@@ -422,59 +499,52 @@
             slides[currentSlide].classList.add('active');
         }
 
-        // Initialize slideshow
         slides[0].classList.add('active');
         setInterval(showNextSlide, 5000);
 
-        // Preload images for smoother transitions
+        // Preload Images
         window.addEventListener('load', () => {
             const images = [
-                'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1920&q=80',
-                'https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&q=80',
-                'https://images.unsplash.com/photo-1589810264340-0ce27bfbf751?auto=format&fit=crop&w=1920&q=80'
+                'https://images.unsplash.com/photo-1576091160550-2173dba999ef',
+                'https://images.unsplash.com/photo-1584432810601-6c7f27d2362b',
+                'https://images.unsplash.com/photo-1589810264340-0ce27bfbf751'
             ];
-            
-            images.forEach(url => {
-                new Image().src = url;
-            });
+            images.forEach(url => new Image().src = url);
         });
 
-        // Original table functionality
+        // Table Functionality
         const hospitals = [
             { name: "City Hospital", patients: 150, beds: 50, doctors: 20 },
             { name: "Apollo Clinic", patients: 200, beds: 80, doctors: 35 },
-            // ... (keep your existing hospital data array)
+            { name: "General Hospital", patients: 180, beds: 45, doctors: 25 },
+            { name: "Unity Medical", patients: 90, beds: 30, doctors: 15 }
         ];
 
         const tableBody = document.getElementById("hospital-table");
 
         function loadTableData() {
-            tableBody.innerHTML = "";
-            hospitals.forEach(hospital => {
-                const row = `<tr>
+            tableBody.innerHTML = hospitals.map(hospital => `
+                <tr>
                     <td>${hospital.name}</td>
                     <td>${hospital.patients}</td>
                     <td>${hospital.beds}</td>
                     <td>${hospital.doctors}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
+                </tr>
+            `).join('');
         }
 
-        document.getElementById("search").addEventListener("input", function () {
+        document.getElementById("search").addEventListener("input", function() {
             const query = this.value.toLowerCase();
-            tableBody.innerHTML = "";
-            hospitals.forEach(hospital => {
-                if (hospital.name.toLowerCase().includes(query)) {
-                    const row = `<tr>
+            tableBody.innerHTML = hospitals
+                .filter(hospital => hospital.name.toLowerCase().includes(query))
+                .map(hospital => `
+                    <tr>
                         <td>${hospital.name}</td>
                         <td>${hospital.patients}</td>
                         <td>${hospital.beds}</td>
                         <td>${hospital.doctors}</td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                }
-            });
+                    </tr>
+                `).join('');
         });
 
         loadTableData();
