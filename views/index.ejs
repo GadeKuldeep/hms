@@ -287,6 +287,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -298,6 +299,7 @@
                 opacity: 0;
                 transform: translateY(50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -404,9 +406,10 @@
             <span>HMS</span>
         </div>
         <button class="login-icon" onclick="window.location.href='/login'">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjMDAwMDAwIj48cGF0aCBkPSJNMTIgMmMtNS41MiAwLTEwIDQuNDgtMTAgMTBzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwLTQuNDgtMTAtMTAtMTB6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=" alt="Login">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjMDAwMDAwIj48cGF0aCBkPSJNMTIgMmMtNS41MiAwLTEwIDQuNDgtMTAgMTBzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwLTQuNDgtMTAtMTAtMTB6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4="
+                alt="Login">
         </button>
-        
+
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
@@ -419,9 +422,15 @@
 
     <div class="hero">
         <div class="background-slideshow">
-            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1920&q=80')"></div>
-            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&q=80')"></div>
-            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1589810264340-0ce27bfbf751?auto=format&fit=crop&w=1920&q=80')"></div>
+            <div class="slide"
+                style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1920&q=80')">
+            </div>
+            <div class="slide"
+                style="background-image: url('https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=1920&q=80')">
+            </div>
+            <div class="slide"
+                style="background-image: url('https://images.unsplash.com/photo-1589810264340-0ce27bfbf751?auto=format&fit=crop&w=1920&q=80')">
+            </div>
         </div>
         <div class="hero-content">
             <h1>Hospital Management System</h1>
@@ -481,7 +490,6 @@
             menuToggle.classList.toggle('active');
         });
 
-        // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('nav') && navLinks.classList.contains('active')) {
                 navLinks.classList.remove('active');
@@ -492,62 +500,66 @@
         // Background Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
-        
         function showNextSlide() {
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
         }
-
         slides[0].classList.add('active');
         setInterval(showNextSlide, 5000);
 
-        // Preload Images
-        window.addEventListener('load', () => {
-            const images = [
-                'https://images.unsplash.com/photo-1576091160550-2173dba999ef',
-                'https://images.unsplash.com/photo-1584432810601-6c7f27d2362b',
-                'https://images.unsplash.com/photo-1589810264340-0ce27bfbf751'
-            ];
-            images.forEach(url => new Image().src = url);
-        });
-
-        // Table Functionality
-        const hospitals = [
-            { name: "City Hospital", patients: 150, beds: 50, doctors: 20 },
-            { name: "Apollo Clinic", patients: 200, beds: 80, doctors: 35 },
-            { name: "General Hospital", patients: 180, beds: 45, doctors: 25 },
-            { name: "Unity Medical", patients: 90, beds: 30, doctors: 15 }
-        ];
-
+        // Hospital Data Fetching and Search
         const tableBody = document.getElementById("hospital-table");
+        let hospitalsData = [];
 
-        function loadTableData() {
-            tableBody.innerHTML = hospitals.map(hospital => `
+        async function fetchHospitalData() {
+            try {
+                const response = await fetch("/hospitals");
+                hospitalsData = await response.json();
+                renderTable(hospitalsData);
+            } catch (error) {
+                console.error("Failed to fetch hospital data:", error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="color: red;">Unable to load hospital data. Please try again later.</td>
+                    </tr>`;
+            }
+        }
+
+        function renderTable(data) {
+            if (data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4">No hospitals found.</td>
+                    </tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = data.map(hospital => `
                 <tr>
-                    <td>${hospital.name}</td>
-                    <td>${hospital.patients}</td>
-                    <td>${hospital.beds}</td>
-                    <td>${hospital.doctors}</td>
+                    <td>${hospital.hospitalName}</td> 
+                    <td>${hospital.patients}</td> 
+                    <td>${hospital.bedsAvailable}</td> 
+                    <td>${hospital.doctors}</td> 
+
                 </tr>
             `).join('');
         }
+        
+        
+        // Initial fetch
+        fetchHospitalData();
 
         document.getElementById("search").addEventListener("input", function() {
             const query = this.value.toLowerCase();
-            tableBody.innerHTML = hospitals
-                .filter(hospital => hospital.name.toLowerCase().includes(query))
-                .map(hospital => `
-                    <tr>
-                        <td>${hospital.name}</td>
-                        <td>${hospital.patients}</td>
-                        <td>${hospital.beds}</td>
-                        <td>${hospital.doctors}</td>
-                    </tr>
-                `).join('');
+            const filteredHospitals = hospitalsData.filter(hospital => 
+                hospital.hospitalName.toLowerCase().includes(query)
+            );
+            renderTable(filteredHospitals);
         });
-
-        loadTableData();
     </script>
+
+
 </body>
+
 </html>

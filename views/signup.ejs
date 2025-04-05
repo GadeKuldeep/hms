@@ -130,12 +130,7 @@
         <form id="signup-form" method="post">
             <div class="input-group">
                 <input type="email" id="email" placeholder="Email" required>
-            </div>
-
-            <div class="input-group">
-                <input type="text" id="hospitalName" placeholder="Hospital Name" required>
-            </div>
-            
+            </div> 
             <div class="input-group">
                 <input type="password" id="password" placeholder="Password" required>
                 <span class="password-toggle" onclick="togglePassword()">👁</span>
@@ -165,12 +160,11 @@
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
-            const hospitalName = document.getElementById("hospitalName").value;
 
             const response = await fetch("/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, hospitalName })
+                body: JSON.stringify({ email, password })
             });
 
             const result = await response.json();

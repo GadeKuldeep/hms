@@ -189,6 +189,7 @@
                     window.location.href = "/dashboard";
                 } else {
                     alert(data.error || 'Login failed. Please try again.');
+                    window.location.href = "/signup";
                 }
             } catch (error) {
                 console.error("Login Failed:", error);

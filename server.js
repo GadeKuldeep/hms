@@ -25,8 +25,8 @@ app.use(express.json());
 app.use(cors());
 
 // 2. Connect to MongoDB
-const mongodb_uri=process.env.MONGO_URI;
-// const mongodb_uri=process.env.MONGO_URI_LOCAL;
+// const mongodb_uri=process.env.MONGO_URI;
+const mongodb_uri=process.env.MONGO_URI_LOCAL;
 
 mongoose.connect(mongodb_uri, {
   useNewUrlParser: true,
@@ -41,6 +41,7 @@ const HospitalSchema = new mongoose.Schema({
   patients: Number,
   doctors: Number
 });
+
 const UserSchema = new mongoose.Schema({
   email: String,
   password: String,
@@ -57,9 +58,11 @@ app.get('/contact',(req,res)=>{
 app.get('/about',(req,res)=>{
   res.render('about');
 });
-app.get('/',(req,res)=>{
-    res.render('index');
+app.get('/', async (req, res) => {
+  const hospitals = await Hospital.find();
+  res.render('index', { hospitals });
 });
+
 app.get('/signup',(req,res)=>{
     res.render('signup');
 });
@@ -96,10 +99,31 @@ app.post("/login", async (req, res) => {
       res.status(500).json({ error: "Server error" });
   }
 });
-
-app.get('/dashboard',(req,res)=>{
+app.get("/dashboard",(req,res)=>{
   res.render('dashboard');
 })
+
+app.post("/dashboard", async (req, res) => {
+  try {
+    const { hospitalName, bedsAvailable, patients, doctors } = req.body;
+
+    // Create a new hospital document
+    const newHospital = new Hospital({
+      hospitalName,
+      bedsAvailable,
+      patients,
+      doctors
+    });
+
+    // Save to MongoDB
+    await newHospital.save();
+
+    res.status(201).json({ message: "Hospital added successfully" });
+  } catch (error) {
+    console.error("Error details:", error);
+    res.status(500).json({ error: "Server error while adding hospital" });
+  }
+});
 
 
 
@@ -108,11 +132,6 @@ app.get("/hospitals", async (req, res) => {
   res.json(hospitals);
 });
 
-app.post("/dashboard", async (req, res) => {
-  const newHospital = new Hospital(req.body);
-  await newHospital.save();
-  res.json({ message: "Hospital added successfully" });
-});
 
 app.put("/hospitals/:id", async (req, res) => {
   await Hospital.findByIdAndUpdate(req.params.id, req.body);
