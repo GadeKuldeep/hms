@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Add Hospital Data</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
+    /* (unchanged CSS) */
     * {
       margin: 0;
       padding: 0;
@@ -106,6 +108,7 @@
         transform: translateY(20px);
         opacity: 0;
       }
+
       to {
         transform: translateY(0);
         opacity: 1;
@@ -113,6 +116,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="form-container">
@@ -138,7 +142,7 @@
         <input type="number" id="doctors" name="doctors" required />
       </div>
 
-      <button type="submit">Submit</button>
+      <button type="submit" id="submitBtn">Submit</button>
       <button type="button" class="home-btn" onclick="goHome()">Home</button>
     </form>
   </div>
@@ -148,7 +152,37 @@
       window.location.href = "/";
     }
 
-    document.getElementById("hospitalForm").addEventListener("submit", async function(event) {
+    let isUpdateMode = false;
+    let updateId = null;
+
+    document.getElementById("hospitalName").addEventListener("blur", async function () {
+      const name = this.value.trim();
+      if (!name) return;
+
+      try {
+        const response = await fetch("/hospitals");
+        const hospitals = await response.json();
+
+        const existing = hospitals.find(h => h.hospitalName.toLowerCase() === name.toLowerCase());
+        if (existing) {
+          isUpdateMode = true;
+          updateId = existing._id;
+          document.getElementById("hospitalName").readOnly = true; // Added readonly
+          document.getElementById("bedsAvailable").value = existing.bedsAvailable;
+          document.getElementById("patients").value = existing.patients;
+          document.getElementById("doctors").value = existing.doctors;
+          document.getElementById("submitBtn").innerText = "Update";
+        } else {
+          isUpdateMode = false;
+          updateId = null;
+          document.getElementById("submitBtn").innerText = "Submit";
+        }
+      } catch (err) {
+        console.error("Error checking hospital:", err);
+      }
+    });
+
+    document.getElementById("hospitalForm").addEventListener("submit", async function (event) {
       event.preventDefault();
 
       const hospitalData = {
@@ -158,19 +192,24 @@
         doctors: document.getElementById("doctors").value
       };
 
+      let method = isUpdateMode ? "PUT" : "POST";
+      let url = isUpdateMode ? `/hospitals/${updateId}` : "/dashboard";
+
       try {
-        const response = await fetch("http://localhost:5000/dashboard", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+        const response = await fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(hospitalData)
         });
 
         const result = await response.json();
         if (response.ok) {
-          alert("Hospital data added successfully!");
+          alert(isUpdateMode ? "Hospital data updated!" : "Hospital data added!");
           document.getElementById("hospitalForm").reset();
+          document.getElementById("submitBtn").innerText = "Submit";
+          document.getElementById("hospitalName").readOnly = false; // Remove readonly
+          isUpdateMode = false;
+          updateId = null;
         } else {
           alert("Error: " + result.error);
         }
@@ -181,4 +220,5 @@
     });
   </script>
 </body>
+
 </html>

@@ -45,7 +45,6 @@ const HospitalSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
   email: String,
   password: String,
-  hospitalName: String
 });
 
 const Hospital = mongoose.model("Hospital", HospitalSchema);
@@ -67,10 +66,10 @@ app.get('/signup',(req,res)=>{
     res.render('signup');
 });
 app.post("/signup", async (req, res) => {
-  const { email, password, hospitalName } = req.body;
+  const { email, password} = req.body;
   const user = await User.findOne({ email });
   if (!user){ const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({ email, password: hashedPassword, hospitalName });
+  const newUser = new User({ email, password: hashedPassword });
   await newUser.save();
   res.json({ message: "User registered successfully" });
 }else{
@@ -99,31 +98,54 @@ app.post("/login", async (req, res) => {
       res.status(500).json({ error: "Server error" });
   }
 });
-app.get("/dashboard",(req,res)=>{
-  res.render('dashboard');
-})
+  app.get("/dashboard",(req,res)=>{
+    res.render('dashboard');
+  })
 
 app.post("/dashboard", async (req, res) => {
   try {
     const { hospitalName, bedsAvailable, patients, doctors } = req.body;
 
-    // Create a new hospital document
     const newHospital = new Hospital({
       hospitalName,
       bedsAvailable,
       patients,
       doctors
     });
-
-    // Save to MongoDB
+    console.log(newHospital);
     await newHospital.save();
-
     res.status(201).json({ message: "Hospital added successfully" });
   } catch (error) {
-    console.error("Error details:", error);
+    console.error("Error while saving hospital:", error);
     res.status(500).json({ error: "Server error while adding hospital" });
   }
 });
+
+app.put("/dashboard", async (req, res) => {
+  try {
+    const { hospitalName, bedsAvailable, patients, doctors } = req.body;
+
+    // Check if hospital exists
+    const hospital = await Hospital.findOne({ hospitalName });
+
+    if (!hospital) {
+      return res.status(404).json({ error: "Hospital not found" });
+    }
+
+    // Update fields (except hospital name)
+    hospital.bedsAvailable = bedsAvailable;
+    hospital.patients = patients;
+    hospital.doctors = doctors;
+
+    await hospital.save();
+
+    res.status(200).json({ message: "Hospital updated successfully" });
+  } catch (error) {
+    console.error("Error while updating hospital:", error);
+    res.status(500).json({ error: "Server error while updating hospital" });
+  }
+});
+
 
 
 
